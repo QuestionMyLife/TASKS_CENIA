@@ -16,6 +16,7 @@ from data_generation.utils import (check_square, sample_contact_many,
                                    sample_position_outside_1
                                    )
 
+
 # ---------- Generador de figuras ----------
 
 def create_shape(
@@ -133,7 +134,6 @@ def decorate_shapes(
     return xy, size, shape_wrapped, colors
 
 
-
 # ---------- Tarea SVRT 1: mismo tipo vs distinto tipo ----------
 
 def task_svrt_1(
@@ -196,7 +196,7 @@ def task_svrt_2(
         inner = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms)
 
         outer.scale(max_size)
-        inner.scale(min_size* max_size)
+        inner.scale(min_size * max_size)
 
         _, _, _, col = decorate_shapes(
             [outer, inner],
@@ -450,6 +450,7 @@ def task_svrt_4(
 
     return sample_neg, sample_pos
 
+
 # ---------- Tarea SVRT 5 ----------
 
 def task_svrt_5(
@@ -511,15 +512,14 @@ def task_svrt_6(
 
     equal_dist_flag = True
 
-    while equal_dist_flag:    
-        sample_neg = decorate_shapes(shapes, max_size=max_size * 2 * 0.33, min_size=min_size, color=color) 
+    while equal_dist_flag:
+        sample_neg = decorate_shapes(shapes, max_size=max_size * 2 * 0.33, min_size=min_size, color=color)
         xy = sample_neg[0][:, 0, :]  # shape (4, 2)
         # Comprobar si las distancias entre figuras idénticas son iguales
-        dist1 = np.linalg.norm(xy[0] - xy[1])  
+        dist1 = np.linalg.norm(xy[0] - xy[1])
         dist2 = np.linalg.norm(xy[2] - xy[3])
         if np.abs(dist1 - dist2) > 0.01:
             equal_dist_flag = False
-
 
     # Clase 1:
     shape1 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
@@ -564,7 +564,7 @@ def task_svrt_7(
     shape3 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
     shapes = [shape1.clone(), shape1.clone(), shape2.clone(), shape2.clone(), shape3.clone(), shape3.clone()]
     sample_pos = decorate_shapes(shapes, max_size=max_size, min_size=min_size, color=color)
-    
+
     # Clase 0: dos tríos de figuras idénticas (hasta traslación)
     shape1 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
     shape2 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
@@ -598,7 +598,6 @@ def task_svrt_8(
     Clase 0 (sample_neg): Si la figura grande contiene la pequeña, son diferentes. Si no se contienen, son iguales (hasta escalamiento y traslación).
     Clase 1 (sample_pos): La figura grande contiene a la pequeña, que es igual a la grande (hasta escalamiento y traslación).
     """
-
 
     # Clase 1: Figura grande con figura idéntica escalada dentro
     outer = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
@@ -693,7 +692,7 @@ def task_svrt_8(
         shape1 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
         shape2 = shape1.clone()
 
-        sample_neg = decorate_shapes([shape1, shape2], max_size=max_size, min_size=min_size, color=color, size = True)
+        sample_neg = decorate_shapes([shape1, shape2], max_size=max_size, min_size=min_size, color=color, size=True)
 
     return sample_neg, sample_pos
 
@@ -792,7 +791,7 @@ def task_svrt_10(
         colors_pos = [colors_pos[i:i+1] for i in range(4)]
     else:
         colors_pos = [np.array([0, 0, 0], dtype=np.float32).reshape(1, 3) for _ in range(4)]
-    
+
     shapes_pos = [[shape.clone()] for _ in range(4)]
     xy_pos = xy[:, None, :]  # shape (4, 1, 2)
     sample_pos = (xy_pos, size, shapes_pos, colors_pos)
@@ -899,7 +898,7 @@ def task_svrt_12(
         colors = [colors[i:i+1] for i in range(3)]
     else:
         colors = [np.array([0, 0, 0], dtype=np.float32).reshape(1, 3) for _ in range(3)]
-    
+
     shapes_wrapped = [[s] for s in shapes]
     sample_pos = (xy, size, shapes_wrapped, colors)
 
@@ -1098,7 +1097,7 @@ def task_svrt_15(
     size = np.full((4, 1), fill_value=max_size / 3)
 
     # Sample neg: cuatro figuras distintas, sus centros forman un cuadrado
-    
+
     shapes = [
         create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate) for _ in range(4)
     ]
@@ -1169,7 +1168,7 @@ def task_svrt_16(
         color=color,
         mirror=True
     )
-    
+
     # --- Clase 0 ---
     shapes_neg = [base_shape.clone() for _ in range(2 * n_pairs)]
     sample_neg = decorate_shapes(
@@ -1181,7 +1180,6 @@ def task_svrt_16(
     )
 
     return sample_neg, sample_pos
-
 
 
 # ---------- Tarea SVRT 17 ----------
@@ -1228,7 +1226,7 @@ def task_svrt_17(
     )
 
     # --- Clase 0 ---
-    shapes_neg = [base_shape.clone() for _ in range(3) ] + [odd_shape.clone()]    
+    shapes_neg = [base_shape.clone() for _ in range(3)] + [odd_shape.clone()]
     sample_neg = decorate_shapes(
         shapes_neg,
         max_size=max_size,
@@ -1265,11 +1263,11 @@ def task_svrt_18(
     shape = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
     shapes_pos = [shape.clone() for _ in range(6)]
     sample_pos = decorate_shapes(shapes_pos, max_size=max_size, min_size=min_size, color=color, mirror=True)
-    
+
     # --- Clase 0 ---
     shapes_neg = [shape.clone() for _ in range(6)]
     sample_neg = decorate_shapes(shapes_neg, max_size=max_size, min_size=min_size, color=color, mirror=False)
-    
+
     return sample_neg, sample_pos
 
 
@@ -1300,7 +1298,7 @@ def task_svrt_19(
     scale_factor = np.random.uniform(0.2, 1.5)
     size1 = np.random.uniform(min_size, max_size)
     size2 = size1 * scale_factor
-    sizes = np.array([[size1], [size2]])   
+    sizes = np.array([[size1], [size2]])
     shape_pos_2 = shape_pos_1.clone()
     shapes_pos = [shape_pos_1, shape_pos_2]
     sample_pos = decorate_shapes(
@@ -1314,7 +1312,7 @@ def task_svrt_19(
     # --- Clase 0 ---
     shape_neg_1 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
     shape_neg_2 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
-    shapes_neg = [shape_neg_1, shape_neg_2]    
+    shapes_neg = [shape_neg_1, shape_neg_2]
     sample_neg = decorate_shapes(
         shapes_neg,
         max_size=max_size,
@@ -1493,8 +1491,8 @@ def task_svrt_23(
             size_inner = min_size * 0.4
 
             # ——— Clase 0 ———
-            outer0   = create_shape(shape_mode, rigid_type, radius, hole_radius,
-                                    n_sides, fourier_terms, symm_rotate)
+            outer0 = create_shape(shape_mode, rigid_type, radius, hole_radius,
+                                  n_sides, fourier_terms, symm_rotate)
             inner0_1 = create_shape(shape_mode, rigid_type, radius, hole_radius,
                                     n_sides, fourier_terms, symm_rotate)
             inner0_2 = create_shape(shape_mode, rigid_type, radius, hole_radius,
@@ -1526,7 +1524,7 @@ def task_svrt_23(
                     cols0 = sample_random_colors(3)
                     colors0 = [cols0[i:i+1] for i in range(3)]
                 else:
-                    colors0 = [np.zeros((1,3), dtype=np.float32) for _ in range(3)]
+                    colors0 = [np.zeros((1, 3), dtype=np.float32) for _ in range(3)]
 
                 sample_neg = (xy0, sizes0, shapes0, colors0)
 
@@ -1585,7 +1583,7 @@ def task_svrt_23(
                 cols1 = sample_random_colors(3)
                 colors1 = [cols1[i:i+1] for i in range(3)]
             else:
-                colors1 = [np.zeros((1,3), dtype=np.float32) for _ in range(3)]
+                colors1 = [np.zeros((1, 3), dtype=np.float32) for _ in range(3)]
 
             sample_pos = (xy_pos, sizes1, [[outer1], [inner1], [inner2]], colors1)
 
@@ -1625,9 +1623,9 @@ def task_MTS(
     shape2 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
     shape3 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
     shape4 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
-    if max_size > 1: 
+    if max_size > 1:
         raise ValueError("max_size debe ser <= 1 para que las figuras encajen en el espacio definido.")
-    # --------- Categoria 1 --------- 
+    # --------- Categoria 1 ---------
     xy_pos, size_pos, shapes_pos, color_pos = decorate_shapes(
         [shape1.clone(), shape2.clone(), shape1.clone()],
         max_size=max_size, min_size=min_size, color=color
@@ -1748,7 +1746,6 @@ def task_SOSD(
     return sample_neg, sample_pos
 
 
-
 # ---------- Tarea RMTS ----------
 
 def task_RMTS(
@@ -1766,13 +1763,13 @@ def task_RMTS(
     rigid_type: str = 'polygon'
 ):
     """
-    RMTS 
+    RMTS
         AB
     CD       EF
     Clase 0: A == B y C == D y E != F o A != B y C != D y E == F
     Clase 1: A == B y C != D y E == F o A != B y C == D y E != F
     """
-    max_size *= 0.4 # Ajuste para que figuras quepan sin superponerse, y permitir separar los pares
+    max_size *= 0.4  # Ajuste para que figuras quepan sin superponerse, y permitir separar los pares
 
     fixed_xy = np.array([
         [0.4, 0.25],  # A
@@ -1839,6 +1836,7 @@ def task_RMTS(
 
     return sample_neg, sample_pos
 
+
 # ---------- Tareas basadas en simetría ----------
 
 # ---------- Tarea de clasificación de simetría ----------
@@ -1876,7 +1874,7 @@ def task_sym_classification(
     # Clase 1: Figura simétrica
     shape_pos = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
     # Aplicar simetría
-    shape_pos.symmetrize(rotate = symm_rotation)
+    shape_pos.symmetrize(rotate=symm_rotation)
     sample_pos = decorate_shapes(
         [shape_pos],
         max_size=max_size,
@@ -1886,6 +1884,7 @@ def task_sym_classification(
     )
 
     return sample_neg, sample_pos
+
 
 # ---------- Tarea MTS basada en simetría ----------
 
@@ -1950,6 +1949,7 @@ def task_sym_MTS(
 
     return sample_neg, sample_pos
 
+
 # ---------- Tarea SD basada en simetría ----------
 
 def task_sym_SD(
@@ -2001,6 +2001,7 @@ def task_sym_SD(
 
     return sample_neg, sample_pos
 
+
 # ---------- Tarea SOSD basada en simetría ----------
 
 def task_sym_SOSD(
@@ -2021,7 +2022,7 @@ def task_sym_SOSD(
     """
     Tarea de clasificación de simetría SOSD.
     Clase 1: Ambos pares de figuras tienen misma relación de simetría
-    Es decir, si en un par ambas son simétricas, en el otro par ambas tienen el mismo estatus, i.e. 
+    Es decir, si en un par ambas son simétricas, en el otro par ambas tienen el mismo estatus, i.e.
     ambas son simétricas o ambas son asimétricas,
     y si en un par ambas son asimétricas, en el otro par ambas tienen el mismo estatus, i.e.
     ambas son simétricas o ambas son asimétricas.
@@ -2060,7 +2061,7 @@ def task_sym_SOSD(
             shapes[1].symmetrize(rotate=symm_rotation)
         else:
             # Ambas asimétricas
-            pass  
+            pass
         # Relación de abajo será 1 sim y 1 asim
         if np.random.rand() < 0.5:
             shapes[2].symmetrize(rotate=symm_rotation)
@@ -2082,7 +2083,7 @@ def task_sym_SOSD(
             shapes[1].symmetrize(rotate=symm_rotation)
         # Relación de abajo será igual a la de arriba (1 y 1)
         if np.random.rand() < 0.5:
-            shapes[2].symmetrize(rotate=symm_rotation)  
+            shapes[2].symmetrize(rotate=symm_rotation)
         else:
             shapes[3].symmetrize(rotate=symm_rotation)
     else:
@@ -2092,7 +2093,7 @@ def task_sym_SOSD(
             shapes[1].symmetrize(rotate=symm_rotation)
         else:
             # Ambas asimétricas
-            pass  
+            pass
 
         # Relación de abajo también será de paridad (sim sim o asim asim)
         if np.random.rand() < 0.5:
@@ -2109,6 +2110,7 @@ def task_sym_SOSD(
     sample_pos = (fixed_xy, size, shapes_pos, colors_pos)
 
     return sample_neg, sample_pos
+
 
 # ---------- Tarea RMTS basada en simetría ----------
 
@@ -2133,7 +2135,7 @@ def task_sym_RMTS(
     Clase 1: par de la izquierda tiene relación de simetría diferente al par de arriba, mientras que el par de la derecha tiene la misma relación que el par de arriba.
     Las relaciones están entendidas como SOSD, es decir, si en un par ambas figuras son simétricas, se considera misma relación en otro par si ambas son simétricas o ambas son asimétricas, y lo mismo si en un par ambas son asimétricas.
     """
-    max_size *= 0.4 # Ajuste para que figuras quepan sin superponerse, y permitir separar los pares
+    max_size *= 0.4  # Ajuste para que figuras quepan sin superponerse, y permitir separar los pares
 
     fixed_xy = np.array([
         [0.4, 0.25],  # A
@@ -2239,8 +2241,11 @@ def task_sym_RMTS(
 
     return sample_neg, sample_pos
 
+
 # ---------- Registro de tareas ----------
+
 # Tareas SVRT y tareas cenia
+
 TASKS_SVRT = [
     ["task_svrt_1", task_svrt_1],
     ["task_svrt_2", task_svrt_2],

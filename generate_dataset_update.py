@@ -147,7 +147,7 @@ if __name__ == '__main__':
                         min_size=args.min_size,
                         color=args.color,
                         rigid_type=args.rigid_type
-                )
+                        )
             generate_dataset(task_name, task_fn, args.data_dir, args.image_size,
                              args.seed, args.train_size, args.val_size, args.test_size)
 
