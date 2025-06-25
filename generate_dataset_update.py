@@ -36,10 +36,14 @@ TASKS_IDX = {
     24: "task_MTS",
     25: "task_SD",
     26: "task_SOSD",
-    27: "task_RMTS"
-    # puedes ir agregando más como:
-    # 2: "task_svrt_2",
-    # 3: "task_symmetry_rule",
+    27: "task_RMTS",
+    28: "task_sym_classification",
+    29: "task_sym_MTS",
+    30: "task_sym_SD",
+    31: "task_sym_SOSD",
+    32: "task_sym_RMTS"
+    # Pueden agregarse mas tareas siguiendo el formato
+    # recordar agregar en data_generation/tasks_generation_cenia.py:
 }
 
 
@@ -94,6 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('--min_size', type=float, default=0.2)
     parser.add_argument('--color', type=bool, default=False)
     parser.add_argument('--rigid_type', type=str, default='polygon')
+    parser.add_argument('--symm_rotation', type=bool, default=False)
 
     args = parser.parse_args()
     logging.info(f'JOB PID {os.getpid()}')
@@ -115,17 +120,33 @@ if __name__ == '__main__':
                 raise ValueError(f"No se encontró la función para {task_name} en TASKS_SVRT.")
 
             # Generar función con hiperparámetros inyectados
-            def task_fn():
-                return task_fn_base(
-                    shape_mode=args.shape_mode,
-                    radius=args.radius,
-                    hole_radius=args.hole_radius,
-                    n_sides=args.n_sides,
-                    fourier_terms=args.fourier_terms,
-                    max_size=args.max_size,
-                    min_size=args.min_size,
-                    color=args.color,
-                    rigid_type=args.rigid_type
+            # Incluir argumento de rotación simétrica para tareas de simetría
+            if 'sym' in task_name:
+                def task_fn():
+                    return task_fn_base(
+                        shape_mode=args.shape_mode,
+                        radius=args.radius,
+                        hole_radius=args.hole_radius,
+                        n_sides=args.n_sides,
+                        fourier_terms=args.fourier_terms,
+                        max_size=args.max_size,
+                        min_size=args.min_size,
+                        color=args.color,
+                        rigid_type=args.rigid_type,
+                        symm_rotation=args.symm_rotation
+                    )
+            else:
+                def task_fn():
+                    return task_fn_base(
+                        shape_mode=args.shape_mode,
+                        radius=args.radius,
+                        hole_radius=args.hole_radius,
+                        n_sides=args.n_sides,
+                        fourier_terms=args.fourier_terms,
+                        max_size=args.max_size,
+                        min_size=args.min_size,
+                        color=args.color,
+                        rigid_type=args.rigid_type
                 )
             generate_dataset(task_name, task_fn, args.data_dir, args.image_size,
                              args.seed, args.train_size, args.val_size, args.test_size)
@@ -143,18 +164,33 @@ if __name__ == '__main__':
             raise ValueError(f"No se encontró la función para {task_name} en TASKS_SVRT.")
 
         # Generar función con hiperparámetros inyectados
-        def task_fn():
-            return task_fn_base(
-                shape_mode=args.shape_mode,
-                radius=args.radius,
-                hole_radius=args.hole_radius,
-                n_sides=args.n_sides,
-                fourier_terms=args.fourier_terms,
-                max_size=args.max_size,
-                min_size=args.min_size,
-                color=args.color,
-                rigid_type=args.rigid_type
-            )
+        if 'sym' in task_name:
+            def task_fn():
+                return task_fn_base(
+                    shape_mode=args.shape_mode,
+                    radius=args.radius,
+                    hole_radius=args.hole_radius,
+                    n_sides=args.n_sides,
+                    fourier_terms=args.fourier_terms,
+                    max_size=args.max_size,
+                    min_size=args.min_size,
+                    color=args.color,
+                    rigid_type=args.rigid_type,
+                    symm_rotation=args.symm_rotation
+                )
+        else:
+            def task_fn():
+                return task_fn_base(
+                    shape_mode=args.shape_mode,
+                    radius=args.radius,
+                    hole_radius=args.hole_radius,
+                    n_sides=args.n_sides,
+                    fourier_terms=args.fourier_terms,
+                    max_size=args.max_size,
+                    min_size=args.min_size,
+                    color=args.color,
+                    rigid_type=args.rigid_type
+                )
 
         generate_dataset(task_name, task_fn, args.data_dir, args.image_size,
                          args.seed, args.train_size, args.val_size, args.test_size)
