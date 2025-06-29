@@ -36,7 +36,7 @@ pip install numpy opencv-python Pillow matplotlib shapely scipy
 ```
 ## Generacion de datos
 
-Para generar los datos debe ejecutarse el archivo `generate_dataset_update`. Si no se entrega ningun argumento, el codigo se ejecuta con los valores por defecto. Los argumentos son especificados en el siguiente punto en la descripción detallada del archivo. Ejemplos concretos de comandos de generacion de datos pueden ser encontrados en `test_tasks.txt`. No obstante, a continuacion incluimos un comando para generar todos los datos para todas las tareas con los valores por defecto.
+Para generar los datos debe ejecutarse el archivo `generate_dataset_update`. Siempre como minimo especificarse el argumento `--task_idx`. Si no se entrega ningun otro argumento, el codigo se ejecuta con los valores por defecto. Los argumentos son especificados en el siguiente punto en la descripción detallada del archivo. Ejemplos concretos de comandos de generacion de datos pueden ser encontrados en `test_tasks.txt`. No obstante, a continuacion incluimos un comando para generar todos los datos para todas las tareas con los valores por defecto.
  
 ```sh
 python generate_dataset_update.py --task_idx 0
