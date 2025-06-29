@@ -49,7 +49,7 @@ Script principal para la generación de datasets de tareas visuales. Permite sel
 
 - **Entradas:**
   - `--seed`: Semilla para la generación aleatoria (**int**, valor por defecto: `0`).
-  - `--data_dir`: Ruta donde se guardarán los datos generados (**str**, valor por defecto: `'../cvrt_data/'`).
+  - `--data_dir`: Ruta donde se guardarán los datos generados (**str**, valor por defecto: `'default_datasets'`).
   - `--task_idx`: Índice de la tarea a generar (**int**, **requerido**).
   - `--train_size`: Número de ejemplos para el set de entrenamiento (**int**, valor por defecto: `4`).
   - `--val_size`: Número de ejemplos para el set de validación (**int**, valor por defecto: `4`).

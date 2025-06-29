@@ -80,7 +80,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--seed', type=int, default=0)
-    parser.add_argument('--data_dir', type=str, default='../cvrt_data/')
+    parser.add_argument('--data_dir', type=str, default='default_datasets')
     parser.add_argument('--task_idx', type=int, required=True)
     parser.add_argument('--train_size', type=int, default=4)
     parser.add_argument('--val_size', type=int, default=4)
