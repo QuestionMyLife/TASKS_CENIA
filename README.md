@@ -105,11 +105,16 @@ Estas funcionalidades permiten crear figuras complejas, transformarlas, suavizar
 Contiene descripciones de las tareas SVRT y extendidas, incluyendo el número de objetos, detalles de las categorías y referencias a las funciones de generación de cada tarea.
 
 ### data_generation/tasks_generation_cenia.py
-Archivo que implementa todas las funciones de generación de tareas visuales (SVRT y extendidas). Cada función genera ejemplos positivos y negativos para una tarea específica, utilizando las utilidades de generación y decoración de figuras.
+Archivo que implementa todas las funciones de generación de tareas visuales (SVRT y extendidas). Cada función genera ejemplos positivos y negativos para una tarea específica, decorando y generando figuras con funciones auxiliares.
 
-- Define la función create_shape para crear figuras según el modo (normal, rigid, smooth, symm).
-- Implementa funciones como task_svrt_1, task_svrt_2, ..., task_MTS, task_SD, etc.
-- Registra todas las tareas en la lista TASKS_SVRT para su uso desde el script principal.
+A continuación se incluyen y describen estas funciones. 
+
+- **`create_shape(...)`**  
+  Crea y retorna una figura (`Shape`) según el modo especificado. Permite elegir entre modos de figura normal, rígida (polígonos, flechas), suavizada (Fourier) o simétrica. Los parámetros controlan el radio, número de lados, suavizado, tipo rígido, etc.
+
+- **`decorate_shapes(shapes, ...)`**  
+  Decora una lista de figuras asignando tamaños, posiciones (sin solapamiento), colores, rotaciones y flips. Permite controlar si las figuras se alinean, se distribuyen en círculo, son simétricas, etc. Devuelve las posiciones, tamaños, figuras decoradas y colores listos para renderizar.
+
 ### data_generation/utils.py
 Funciones auxiliares para la generación y manipulación de escenas y figuras. Incluye utilidades para muestreo de posiciones, colores, chequeo de condiciones geométricas y renderizado de imágenes.
 
