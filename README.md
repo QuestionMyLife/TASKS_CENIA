@@ -74,7 +74,7 @@ Archivo de texto con ejemplos de comandos para probar diferentes tareas y modos 
 
 ### data_generation/shape.py
 
-La clase `Shape` es la base para la generación, manipulación y transformación de figuras geométricas utilizadas en las tareas del benchmark. A continuación se listan sus principales métodos y funcionalidades:
+La clase `Shape` es la base para la generación, manipulación y transformación de figuras geométricas utilizadas en las tareas del benchmark. A continuación se listan y describen sus métodos:
 
 - **`__init__(...)`**: Constructor de la clase. Inicializa los parámetros de la figura (radio, hueco, simetría, etc.) y genera una figura aleatoria si `randomize=True`.
 - **`generate_part(...)`**: Genera los puntos base de la figura, asegurando que estén dentro del radio y fuera del hueco central.
@@ -114,24 +114,24 @@ Archivo que implementa todas las funciones de generación de tareas visuales (SV
 Funciones auxiliares para la generación y manipulación de escenas y figuras. Incluye utilidades para muestreo de posiciones, colores, chequeo de condiciones geométricas y renderizado de imágenes.
 
 - **Funciones principales:**
-  - `hsv_to_rgb(h, s, v)`: Convierte un color en espacio HSV a RGB.
-  - `sample_position_inside_1(s1, s2, scale, n_candidates=200)`: Devuelve centros posibles para ubicar una figura s2 (escalada) completamente dentro de s1.
-  - `sample_position_outside_1(s1, s2, scale, n_candidates=200)`: Devuelve centros posibles para ubicar una figura s2 (escalada) completamente fuera de s1.
-  - `sample_position_inside_many(s1, shapes, scales, n_candidates=500)`: Devuelve configuraciones de centros para varias figuras dentro de s1, sin solapamiento.
-  - `sample_positions_square(size)`: Genera posiciones para 4 objetos formando un cuadrado.
-  - `squared_distance(p1, p2)`: Calcula la distancia euclidiana al cuadrado entre dos puntos.
-  - `check_square(xy)`: Verifica si 4 puntos forman un cuadrado.
-  - `sample_positions_equidist(size, max_attempts=100, max_inner_attempts=50)`: Genera posiciones para 4 objetos donde dos pares tienen igual distancia.
-  - `sample_positions_bb(size, n_sample_min=1, max_tries=10, n_samples_over=100)`: Genera posiciones aleatorias para objetos de cierto tamaño sin solapamiento.
-  - `sample_positions_align(size)`: Genera posiciones alineadas para varios objetos.
-  - `sample_positions_symmetric_pairs(size, ...)`: Genera posiciones para pares de objetos simétricos respecto al eje vertical.
-  - `sample_points_in_circle(n, radius=0.2, center=(0.5,0.5), on_edge=False)`: Genera n puntos dentro o sobre el borde de un círculo.
-  - `sample_positions_circle(sizes, ...)`: Genera posiciones para objetos distribuidos en círculo, útil para tareas de "odd one out".
-  - `compute_inscribed_circle(shape, resolution=100)`: Calcula el mayor círculo inscrito en una figura.
-  - `sample_random_colors(n_samples)`: Genera n colores aleatorios en espacio HSV.
-  - `sample_contact_many(shapes, sizes, image_dim=128, a=None)`: Genera posiciones para que varias figuras estén en contacto.
-  - `render_cv(xy, size, shapes, color=None, image_size=128)`: Renderiza una escena con OpenCV a partir de las posiciones, tamaños y colores.
-  - `render_scene_safe(xy, size, shape, color, image_size=128)`: Renderiza múltiples figuras en una sola imagen, asegurando el formato correcto de entrada.
+  - **`hsv_to_rgb(h, s, v)`**: Convierte un color en espacio HSV a RGB.
+  - **`sample_position_inside_1(s1, s2, scale, n_candidates=200)`**: Devuelve centros posibles para ubicar una figura s2 (escalada) completamente dentro de s1.
+  - **`sample_position_outside_1(s1, s2, scale, n_candidates=200)`**: Devuelve centros posibles para ubicar una figura s2 (escalada) completamente fuera de s1.
+  - **`sample_position_inside_many(s1, shapes, scales, n_candidates=500)`**: Devuelve configuraciones de centros para varias figuras dentro de s1, sin solapamiento.
+  - **`sample_positions_square(size)`**: Genera posiciones para 4 objetos formando un cuadrado.
+  - **`squared_distance(p1, p2)`**: Calcula la distancia euclidiana al cuadrado entre dos puntos.
+  - **`check_square(xy)`**: Verifica si 4 puntos forman un cuadrado.
+  - **`sample_positions_equidist(size, max_attempts=100, max_inner_attempts=50)`**: Genera posiciones para 4 objetos donde dos pares tienen igual distancia.
+  - **`sample_positions_bb(size, n_sample_min=1, max_tries=10, n_samples_over=100)`**: Genera posiciones aleatorias para objetos de cierto tamaño sin solapamiento.
+  - **`sample_positions_align(size)`**: Genera posiciones alineadas para varios objetos.
+  - **`sample_positions_symmetric_pairs(size, ...)`**: Genera posiciones para pares de objetos simétricos respecto al eje vertical.
+  - **`sample_points_in_circle(n, radius=0.2, center=(0.5,0.5), on_edge=False)`**: Genera n puntos dentro o sobre el borde de un círculo.
+  - **`sample_positions_circle(sizes, ...)`**: Genera posiciones para objetos distribuidos en círculo, útil para tareas de "odd one out".
+  - **`compute_inscribed_circle(shape, resolution=100)`**: Calcula el mayor círculo inscrito en una figura.
+  - **`sample_random_colors(n_samples)`**: Genera n colores aleatorios en espacio HSV.
+  - **`sample_contact_many(shapes, sizes, image_dim=128, a=None)`**: Genera posiciones para que varias figuras estén en contacto.
+  - **`render_cv(xy, size, shapes, color=None, image_size=128)`**: Renderiza una escena con OpenCV a partir de las posiciones, tamaños y colores.
+  - **`render_scene_safe(xy, size, shape, color, image_size=128)`**: Renderiza múltiples figuras en una sola imagen, asegurando el formato correcto de entrada.
 
 Estas funciones auxiliares son utilizadas en diversas tareas.
 
