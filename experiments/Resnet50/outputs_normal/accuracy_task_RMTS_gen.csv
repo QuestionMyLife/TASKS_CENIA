@@ -1,0 +1,13 @@
+dataset,accuracy
+irregular_decagons_color,50.025
+irregular_hexagons,50.05500000000001
+normal,50.01
+normal_small_radius,49.835
+rigid_decagons_color,50.05
+rigid_hexagons,50.12
+rigid_rectangles,49.85
+smooth_high_fourier,50.76500000000001
+smooth_low_fourier,50.18
+smooth_mid_fourier_color,50.005
+symm_color_big,50.025
+symm_short,50.13999999999999
