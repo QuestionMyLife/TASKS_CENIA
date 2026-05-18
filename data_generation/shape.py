@@ -24,6 +24,10 @@ class Shape(object):
         self.y_pixels = []
         self.transformations = []
 
+        # Atributos para manejo de simetrías en polígonos
+        self.base_type = None
+        self.n_points = None
+
         self.sym_flip = sym_flip
         self.sym_rot = sym_rot
 
@@ -207,6 +211,8 @@ class Shape(object):
             self.y_pixels = np.sin(theta)
 
         elif type == 'irregular':
+            self.base_type = 'irregular'
+            self.n_points = points
             # Generamos poliedro irregular a partir de figura base
             # Seleccionamos points puntos y los conectamos
             idx = np.linspace(0, len(self.x_pixels) - 1, points, dtype=int, endpoint=False)
@@ -252,41 +258,45 @@ class Shape(object):
 
     def symmetrize(self, rotate=0):
 
-        if self.x_pixels[0] < 0:
-            # Tomamos un lado de la figura
-            mask = self.x_pixels >= 0
+        if self.base_type == 'irregular':
+            self._build_symmetric_polygon()
 
-            # Copiamos el lado original
-            x_copy = self.x_pixels[mask]
-            y_copy = self.y_pixels[mask]
+        else:
+            if self.x_pixels[0] < 0:
+                # Tomamos un lado de la figura
+                mask = self.x_pixels >= 0
 
-            self.x_pixels = self.x_pixels[mask][::-1]
-            self.y_pixels = self.y_pixels[mask][::-1]
+                # Copiamos el lado original
+                x_copy = self.x_pixels[mask]
+                y_copy = self.y_pixels[mask]
 
-            # Reflejamos
-            self.flip()
+                self.x_pixels = self.x_pixels[mask][::-1]
+                self.y_pixels = self.y_pixels[mask][::-1]
 
-            # Concatenamos nuevamente el lado original sin reflejar
-            self.x_pixels = np.concatenate([self.x_pixels, x_copy])
-            self.y_pixels = np.concatenate([self.y_pixels, y_copy])
+                # Reflejamos
+                self.flip()
 
-        elif self.x_pixels[0] >= 0:
+                # Concatenamos nuevamente el lado original sin reflejar
+                self.x_pixels = np.concatenate([self.x_pixels, x_copy])
+                self.y_pixels = np.concatenate([self.y_pixels, y_copy])
 
-            mask = self.x_pixels < 0
+            elif self.x_pixels[0] >= 0:
 
-            # Copiamos el lado original
-            x_copy = self.x_pixels[mask]
-            y_copy = self.y_pixels[mask]
+                mask = self.x_pixels < 0
 
-            self.x_pixels = self.x_pixels[mask][::-1]
-            self.y_pixels = self.y_pixels[mask][::-1]
+                # Copiamos el lado original
+                x_copy = self.x_pixels[mask]
+                y_copy = self.y_pixels[mask]
 
-            # Reflejamos
-            self.flip()
+                self.x_pixels = self.x_pixels[mask][::-1]
+                self.y_pixels = self.y_pixels[mask][::-1]
 
-            # Concatenamos nuevamente el lado original sin reflejar
-            self.x_pixels = np.concatenate([self.x_pixels, x_copy])
-            self.y_pixels = np.concatenate([self.y_pixels, y_copy])
+                # Reflejamos
+                self.flip()
+
+                # Concatenamos nuevamente el lado original sin reflejar
+                self.x_pixels = np.concatenate([self.x_pixels, x_copy])
+                self.y_pixels = np.concatenate([self.y_pixels, y_copy])
 
         if rotate:
             # Aplicar rotación en ángulo aleatorio
@@ -308,6 +318,100 @@ class Shape(object):
         self.bb = (w, h)
         self.wh = (w, h)
         self.transformations = []
+
+    def _build_symmetric_polygon(self):
+        max_attempts = 50
+        max_aspect_ratio = 6.0
+        
+        for _ in range(max_attempts):
+            N = self.n_points
+            axis_angles = []
+            axis_radii = []
+            n_side_points = 0
+
+            min_radius = 0.5
+            max_radius = 1.0
+
+            if N % 2 == 0:
+                if np.random.rand() < 0.5:
+                    n_side_points = N // 2  
+                else:
+                    axis_angles = [np.pi/2, -np.pi/2]
+                    axis_radii = [np.random.uniform(min_radius, max_radius), np.random.uniform(min_radius, max_radius)]
+                    n_side_points = (N - 2) // 2
+            else:
+                if np.random.rand() < 0.5:
+                    axis_angles = [np.pi/2]
+                else:
+                    axis_angles = [-np.pi/2]
+                axis_radii = [np.random.uniform(min_radius, max_radius)]
+                n_side_points = (N - 1) // 2
+
+            angles_right = []
+            radii_right = []
+            
+            if n_side_points > 0:
+                # Margen para evitar colapsos
+                margin = 0.2
+                min_angle_dist = 0.15
+                angle_min = -np.pi/2 + margin
+                angle_max = np.pi/2 - margin
+                
+                # Muestreo aleatorio con verificación de distancia mínima
+                for _ in range(n_side_points):
+                    valid = False
+                    attempts = 0
+                    while not valid and attempts < 100:
+                        a = np.random.uniform(angle_min, angle_max)
+                        if all(abs(a - existing) >= min_angle_dist for existing in angles_right):
+                            angles_right.append(a)
+                            valid = True
+                        attempts += 1
+                    # Fallback
+                    if not valid:
+                        angles_right.append(a)
+                    
+                angles_right = np.array(angles_right)
+                
+                radii_right = np.random.uniform(min_radius, max_radius, n_side_points)
+                
+                # Reflejo polar para simetría
+                angles_left = np.pi - angles_right
+                radii_left = radii_right
+            else:
+                angles_left, radii_left = [], []
+
+            final_angles = np.concatenate([axis_angles, angles_right, angles_left])
+            final_radii = np.concatenate([axis_radii, radii_right, radii_left])
+
+            sort_idx = np.argsort(final_angles)
+            final_angles = final_angles[sort_idx]
+            final_radii = final_radii[sort_idx]
+
+            # Conversión de polar a cartesiano
+            final_x = final_radii * np.cos(final_angles)
+            final_y = final_radii * np.sin(final_angles)
+
+            # Chequeo de aspecto para evitar colapsos
+            min_x, max_x = final_x.min(), final_x.max()
+            min_y, max_y = final_y.min(), final_y.max()
+            
+            width = max_x - min_x
+            height = max_y - min_y
+            
+            if width < 1e-5 or height < 1e-5:
+                continue 
+                
+            aspect_ratio = max(width / height, height / width)
+            
+            if aspect_ratio <= max_aspect_ratio:
+                self.x_pixels = final_x
+                self.y_pixels = final_y
+                return
+                
+        # Fallback
+        self.x_pixels = final_x
+        self.y_pixels = final_y
 
     def flip_diag(self):
         self.x_pixels, self.y_pixels = self.y_pixels, self.x_pixels
