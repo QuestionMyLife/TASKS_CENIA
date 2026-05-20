@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     # Argumentos para generación de figuras
     parser.add_argument('--shape_mode', type=str, default='normal',
-                        choices=['normal', 'rigid', 'smooth', 'symm'])
+                        choices=['normal', 'rigid', 'smooth', 'symm', 'ellipse'])
     parser.add_argument('--radius', type=float, default=0.5)
     parser.add_argument('--hole_radius', type=float, default=0.05)
     parser.add_argument('--n_sides', type=int, default=5)

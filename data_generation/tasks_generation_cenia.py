@@ -45,6 +45,11 @@ def create_shape(
         s = Shape(radius=radius, hole_radius=hole_radius)
         s.symmetrize(rotate=symm_rotate)
         return s
+    
+    if shape_mode == 'ellipse':
+        s = Shape(radius=radius, hole_radius=hole_radius)
+        s.build_base_ellipse()
+        return s
 
     raise ValueError(f"shape_mode '{shape_mode}' no reconocido")
 

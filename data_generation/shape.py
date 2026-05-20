@@ -256,10 +256,56 @@ class Shape(object):
         self.wh = (w, h)
         self.transformations = []
 
+    def build_base_ellipse(self):
+        self.base_type = 'ellipse'
+        
+        n_pts = 100
+        t = np.linspace(0, 2 * np.pi, n_pts, endpoint=False)
+
+        self._ellipse_a = np.random.uniform(0.2, 1.0)
+        self._ellipse_b = np.random.uniform(0.2, 1.0)
+        
+        while abs(self._ellipse_a - self._ellipse_b) < 0.1:
+            self._ellipse_b = np.random.uniform(0.2, 1.0)
+
+        x = self._ellipse_a * np.cos(t)
+        y = self._ellipse_b * np.sin(t)
+
+        # rotación para evitar alineación y generar variedad
+        base_angle = np.random.uniform(10, 80)
+        quadrant_shift = np.random.choice([0, 90])
+        angle = np.radians(base_angle + quadrant_shift)
+
+        ux, uy = np.cos(angle), -np.sin(angle)
+        vx, vy = np.sin(angle), np.cos(angle)
+
+        self.x_pixels = x * ux + y * uy
+        self.y_pixels = x * vx + y * vy
+        
+        self.nb_pixels = len(self.x_pixels)
+
+        # Centrar
+        self.x_pixels -= (self.x_pixels.max() + self.x_pixels.min()) / 2
+        self.y_pixels -= (self.y_pixels.max() + self.y_pixels.min()) / 2
+
+        # Normalizar a [-0.5, 0.5] en la dimensión más grande
+        w = self.x_pixels.max() - self.x_pixels.min()
+        h = self.y_pixels.max() - self.y_pixels.min()
+        scale = 1 / max(w, h)
+        self.x_pixels *= scale
+        self.y_pixels *= scale
+
+        self.bb = (w, h)
+        self.wh = (w, h)
+        self.transformations = []
+
     def symmetrize(self, rotate=0):
 
         if self.base_type == 'irregular':
             self._build_symmetric_polygon()
+
+        elif self.base_type == 'ellipse':
+            self._symmetrize_ellipse()
 
         else:
             if self.x_pixels[0] < 0:
@@ -412,6 +458,25 @@ class Shape(object):
         # Fallback
         self.x_pixels = final_x
         self.y_pixels = final_y
+
+    def _symmetrize_ellipse(self):
+        
+        # Elegir entre orientación horizontal o vertical para obtener simetría
+        rotation = np.random.choice([0, np.pi/2])
+
+        ux, uy = np.cos(rotation), -np.sin(rotation)
+        vx, vy = np.sin(rotation), np.cos(rotation)
+
+        n_pts = max(100, self.n_points if self.n_points else 100)
+        t = np.linspace(0, 2 * np.pi, n_pts, endpoint=False)
+        
+        x = self._ellipse_a * np.cos(t)
+        y = self._ellipse_b * np.sin(t)
+
+        self.x_pixels = x * ux + y * uy
+        self.y_pixels = x * vx + y * vy
+        
+        self.nb_pixels = len(self.x_pixels)
 
     def flip_diag(self):
         self.x_pixels, self.y_pixels = self.y_pixels, self.x_pixels
