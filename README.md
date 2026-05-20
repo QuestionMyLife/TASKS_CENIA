@@ -56,7 +56,7 @@ Script principal para la generación de datasets de tareas visuales. Permite sel
   - `--test_size`: Número de ejemplos para el set de test (**int**, valor por defecto: `4`).
   - `--image_size`: Tamaño (alto y ancho) de las imágenes generadas en píxeles (**int**, valor por defecto: `128`).
   - Argumentos para generación de figuras:
-    - `--shape_mode`: Modo de generación de la figura (`normal`, `rigid`, `smooth`, `symm`) (**str**, valor por defecto: `'normal'`).
+    - `--shape_mode`: Modo de generación de la figura (`normal`, `rigid`, `smooth`, `symm`, `ellipse`) (**str**, valor por defecto: `'normal'`).
     - `--radius`: Radio base de la figura (**float**, valor por defecto: `0.5`).
     - `--hole_radius`: Radio del agujero interior de la figura (**float**, valor por defecto: `0.05`).
     - `--n_sides`: Número de lados para polígonos (**int**, valor por defecto: `5`).
