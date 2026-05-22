@@ -1842,6 +1842,104 @@ def task_RMTS(
     return sample_neg, sample_pos
 
 
+# ================================ Tarea TOSD ================================ #
+
+def task_TOSD(
+    shape_mode: str = 'normal',
+    radius: float = 0.5,
+    hole_radius: float = 0.05,
+    n_sides: int = 5,
+    fourier_terms: int = 20,
+    symm_rotate: bool = True,
+    poly_min_sides: int = 3,
+    poly_max_sides: int = 10,
+    max_size: float = 0.4,
+    min_size: float | None = 0.2,
+    color: bool = False,
+    rigid_type: str = 'polygon'
+):
+    """
+    TOSD – Third-order same-different:
+    A B  C D
+    E F  G H
+    Clase 1: Relación de segundo orden entre pares AB y CD es la misma que entre EF y GH. 
+    Clase 0: Relación de segundo orden entre pares AB y CD es diferente a la relación entre EF y GH.
+    """
+    max_size *= 0.4  # Ajuste para que figuras quepan sin superponerse, y permitir separar los pares
+
+    fixed_xy = np.array([
+        [0.15, 0.25],  # A
+        [0.35, 0.25],  # B
+        [0.65, 0.25],  # C
+        [0.85, 0.25],  # D
+        [0.15, 0.75],  # E
+        [0.35, 0.75],  # F
+        [0.65, 0.75],  # G
+        [0.85, 0.75],  # H
+    ])[:, None, :]  # shape (8, 1, 2)
+
+    # --- Funciones Auxiliares ---
+    def generate_pair(is_identical):
+        """Genera un par de figuras idénticas [I] o distintas [D]."""
+        if is_identical:
+            s = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
+            return [s, s.clone()]
+        else:
+            s1 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
+            s2 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
+            return [s1, s2]
+
+    def build_shapes_from_template(template):
+        """Recibe una tupla de 4 booleanos y construye las 8 figuras correspondientes."""
+        shapes = []
+        for is_identical in template:
+            shapes.extend(generate_pair(is_identical))
+        return shapes
+
+    # I (True) = Par Idéntico, D (False) = Par Distinto
+    I = True
+    D = False
+
+    # --- Plantillas de Categoría 1 (Positiva) ---
+    # Relación M-M (Matched-Matched) o U-U (Unmatched-Unmatched)
+    templates_pos = [
+        # M - M
+        (I, I, I, I), (I, I, D, D), (D, D, I, I), (D, D, D, D),
+        # U - U
+        (I, D, I, D), (I, D, D, I), (D, I, I, D), (D, I, D, I)
+    ]
+
+    # --- Plantillas de Categoría 0 (Negativa) ---
+    # Relación M-U (Matched-Unmatched) o U-M (Unmatched-Matched)
+    templates_neg = [
+        # M - U
+        (I, I, I, D), (I, I, D, I), (D, D, I, D), (D, D, D, I),
+        # U - M
+        (I, D, I, I), (I, D, D, D), (D, I, I, I), (D, I, D, D)
+    ]
+
+    # Elegimos las relaciones aleatoriamente
+    template_pos = templates_pos[np.random.randint(len(templates_pos))]
+    template_neg = templates_neg[np.random.randint(len(templates_neg))]
+
+    # Generamos las listas de 8 shapes correspondientes
+    shapes_pos = build_shapes_from_template(template_pos)
+    shapes_neg = build_shapes_from_template(template_neg)
+
+    _, size_pos, shapes_wrapped_pos, colors_pos = decorate_shapes(
+        shapes_pos,
+        max_size=max_size, min_size=min_size, color=color, sizes=[[max_size]] * 8
+    )
+    sample_pos = (fixed_xy, size_pos, shapes_wrapped_pos, colors_pos)
+
+    _, size_neg, shapes_wrapped_neg, colors_neg = decorate_shapes(
+        shapes_neg,
+        max_size=max_size, min_size=min_size, color=color, sizes=[[max_size]] * 8
+    )
+    sample_neg = (fixed_xy, size_neg, shapes_wrapped_neg, colors_neg)
+
+    return sample_neg, sample_pos
+
 # ---------- Tareas basadas en simetría ----------
 
 # ---------- Tarea de clasificación de simetría ----------
@@ -2279,6 +2377,7 @@ TASKS_SVRT = [
     ["task_SD", task_SD],
     ["task_SOSD", task_SOSD],
     ["task_RMTS", task_RMTS],
+    ["task_TOSD", task_TOSD],
     ["task_sym_classification", task_sym_classification],
     ["task_sym_MTS", task_sym_MTS],
     ["task_sym_SD", task_sym_SD],
