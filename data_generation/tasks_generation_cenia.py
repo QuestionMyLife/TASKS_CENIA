@@ -1940,6 +1940,122 @@ def task_TOSD(
 
     return sample_neg, sample_pos
 
+# ================================ Tarea NRMTS =============================== #
+
+def task_NRMTS(
+    shape_mode: str = 'normal',
+    radius: float = 0.5,
+    hole_radius: float = 0.05,
+    n_sides: int = 5,
+    fourier_terms: int = 20,
+    symm_rotate: bool = True,
+    poly_min_sides: int = 3,
+    poly_max_sides: int = 10,
+    max_size: float = 0.4,
+    min_size: float | None = 0.2,
+    color: bool = False,
+    rigid_type: str = 'polygon'
+):
+    """
+    NRMTS – Nested Relational Match-to-Sample:
+    
+            A B
+            C D
+    
+    E F             I J
+    G H             K L
+    
+    Clase 0: La relación de 2do orden del Top es igual a Bottom Left.
+    Clase 1: La relación de 2do orden del Top es igual a Bottom Right.
+    """
+
+    max_size *= 0.25
+    
+    fixed_xy = np.array([
+        [0.42, 0.20],  # A 
+        [0.58, 0.20],  # B 
+        [0.42, 0.35],  # C 
+        [0.58, 0.35],  # D 
+        
+        [0.12, 0.65],  # E 
+        [0.28, 0.65],  # F 
+        [0.12, 0.80],  # G 
+        [0.28, 0.80],  # H 
+        
+        [0.72, 0.65],  # I 
+        [0.88, 0.65],  # J 
+        [0.72, 0.80],  # K 
+        [0.88, 0.80],  # L 
+    ])[:, None, :]  # shape (12, 1, 2)
+
+    # --- Funciones Auxiliares ---
+    def generate_pair(is_identical):
+        """Genera un par de figuras idénticas [I] o distintas [D]."""
+        if is_identical:
+            s = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
+            return [s, s.clone()]
+        else:
+            s1 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
+            s2 = create_shape(shape_mode, rigid_type, radius, hole_radius, n_sides, fourier_terms, symm_rotate)
+            return [s1, s2]
+
+    def build_shapes_from_template(template):
+        """Recibe una tupla de 6 booleanos (3 grupos de 2 pares) y construye 12 figuras."""
+        shapes = []
+        for is_identical in template:
+            shapes.extend(generate_pair(is_identical))
+        return shapes
+
+    # Identical (True) y Distinct (False)
+    I = True
+    D = False
+
+    # Pools de relaciones de 2do orden para un grupo de 4 figuras
+    M_templates = [(I, I), (D, D)]  # Matched (Misma relación interna)
+    U_templates = [(I, D), (D, I)]  # Unmatched (Distinta relación interna)
+
+    # --- Clase 0 (Negativa): Top hace match con Bottom Left ---
+    target_is_M = np.random.rand() < 0.5
+    if target_is_M:
+        top_rel = M_templates[np.random.randint(2)]
+        bl_rel  = M_templates[np.random.randint(2)]
+        br_rel  = U_templates[np.random.randint(2)]
+    else:
+        top_rel = U_templates[np.random.randint(2)]
+        bl_rel  = U_templates[np.random.randint(2)]
+        br_rel  = M_templates[np.random.randint(2)]
+        
+    template_neg = top_rel + bl_rel + br_rel
+    shapes_neg = build_shapes_from_template(template_neg)
+
+    # --- Clase 1 (Positiva): Top hace match con Bottom Right ---
+    target_is_M = np.random.rand() < 0.5
+    if target_is_M:
+        top_rel = M_templates[np.random.randint(2)]
+        bl_rel  = U_templates[np.random.randint(2)]
+        br_rel  = M_templates[np.random.randint(2)]
+    else:
+        top_rel = U_templates[np.random.randint(2)]
+        bl_rel  = M_templates[np.random.randint(2)]
+        br_rel  = U_templates[np.random.randint(2)]
+        
+    template_pos = top_rel + bl_rel + br_rel
+    shapes_pos = build_shapes_from_template(template_pos)
+
+    _, size_neg, shapes_wrapped_neg, colors_neg = decorate_shapes(
+        shapes_neg,
+        max_size=max_size, min_size=min_size, color=color, sizes=[[max_size]] * 12
+    )
+    sample_neg = (fixed_xy, size_neg, shapes_wrapped_neg, colors_neg)
+
+    _, size_pos, shapes_wrapped_pos, colors_pos = decorate_shapes(
+        shapes_pos,
+        max_size=max_size, min_size=min_size, color=color, sizes=[[max_size]] * 12
+    )
+    sample_pos = (fixed_xy, size_pos, shapes_wrapped_pos, colors_pos)
+
+    return sample_neg, sample_pos
+
 # ---------- Tareas basadas en simetría ----------
 
 # ---------- Tarea de clasificación de simetría ----------
@@ -2378,6 +2494,7 @@ TASKS_SVRT = [
     ["task_SOSD", task_SOSD],
     ["task_RMTS", task_RMTS],
     ["task_TOSD", task_TOSD],
+    ["task_NRMTS", task_NRMTS],
     ["task_sym_classification", task_sym_classification],
     ["task_sym_MTS", task_sym_MTS],
     ["task_sym_SD", task_sym_SD],

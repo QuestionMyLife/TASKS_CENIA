@@ -38,11 +38,12 @@ TASKS_IDX = {
     26: "task_SOSD",
     27: "task_RMTS",
     28: "task_TOSD",
-    29: "task_sym_classification",
-    30: "task_sym_MTS",
-    31: "task_sym_SD",
-    32: "task_sym_SOSD",
-    33: "task_sym_RMTS"
+    29: "task_NRMTS",
+    30: "task_sym_classification",
+    31: "task_sym_MTS",
+    32: "task_sym_SD",
+    33: "task_sym_SOSD",
+    34: "task_sym_RMTS"
     # Pueden agregarse mas tareas siguiendo el formato
     # recordar agregar en data_generation/tasks_generation_cenia.py:
 }
