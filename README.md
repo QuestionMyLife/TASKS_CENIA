@@ -64,7 +64,7 @@ Script principal para la generación de datasets de tareas visuales. Permite sel
     - `--max_size`: Tamaño máximo de la figura (**float**, valor por defecto: `0.4`).
     - `--min_size`: Tamaño mínimo de la figura (**float**, valor por defecto: `0.2`).
     - `--color`: Si las figuras serán a color (**bool**, valor por defecto: `False`).
-    - `--rigid_type`: Tipo de figura rígida (`polygon`, etc.) (**str**, valor por defecto: `'polygon'`).
+    - `--rigid_type`: Tipo de figura rígida (`polygon`, `irregular`) (la primera opción genera polígonos regulares, la segunda polígonos irregulares) (**str**, valor por defecto: `'polygon'`).
     - `--symm_rotation`: Si se permite rotación simétrica en figuras de simetría (**bool**, valor por defecto: `False`).
 - **Salida:** imágenes generadas en carpetas organizadas por tarea y split (train/val/test).
 

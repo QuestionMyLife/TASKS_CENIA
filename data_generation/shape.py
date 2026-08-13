@@ -204,6 +204,8 @@ class Shape(object):
 
         # Alterar figura según tipo de figura rígida deseada
         if type == 'polygon':
+            self.base_type = 'polygon'
+            self.n_points = points
             theta = np.linspace(0, 2 * np.pi, points, endpoint=False)
             # Rota para que un vértice apunte hacia arriba
             theta += np.pi / 2
@@ -302,7 +304,10 @@ class Shape(object):
     def symmetrize(self, rotate=0):
 
         if self.base_type == 'irregular':
-            self._build_symmetric_polygon()
+            self._symmetrize_irregular()
+
+        elif self.base_type == 'polygon':
+            self._symmetrize_regular_polygon()
 
         elif self.base_type == 'ellipse':
             self._symmetrize_ellipse()
@@ -365,7 +370,22 @@ class Shape(object):
         self.wh = (w, h)
         self.transformations = []
 
-    def _build_symmetric_polygon(self):
+    def _symmetrize_regular_polygon(self):
+        theta = np.linspace(0, 2 * np.pi, self.n_points, endpoint=False)
+        
+        alignment = np.pi / 2
+        
+        if np.random.rand() < 0.5:
+            alignment += np.pi / self.n_points
+            
+        theta += alignment
+        
+        self.x_pixels = np.cos(theta)
+        self.y_pixels = np.sin(theta)
+        
+        self.nb_pixels = len(self.x_pixels)
+
+    def _symmetrize_irregular(self):
         max_attempts = 50
         max_aspect_ratio = 6.0
         
